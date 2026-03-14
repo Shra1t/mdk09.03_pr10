@@ -1,6 +1,7 @@
 <?php
 	session_start();
 	include("./settings/connect_datebase.php");
+	include("./settings/recaptcha_config.php");
 	
 	if (isset($_SESSION['user'])) {
 		if($_SESSION['user'] != -1) {
@@ -19,6 +20,7 @@
 		<title> Регистрация </title>
 		
 		<script src="https://code.jquery.com/jquery-1.8.3.js"></script>
+		<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 		<link rel="stylesheet" href="style.css">
 	</head>
 	<body>
@@ -45,6 +47,7 @@
 					<input name="_passwordCopy" type="password" placeholder="" onkeypress="return PressToEnter(event)"/>
 					
 					<a href="login.php">Вернуться</a>
+					<div class="g-recaptcha" data-sitekey="<?php echo RECAPTCHA_SITE_KEY; ?>"></div>
 					<input type="button" class="button" value="Зайти" onclick="RegIn()" style="margin-top: 0px;"/>
 					<img src = "img/loading.gif" class="loading" style="margin-top: 0px;"/>
 				</div>
@@ -69,12 +72,18 @@
 				if(_login != "") {
 					if(_password != "") {
 						if(_password == _passwordCopy) {
+							var captcha = grecaptcha.getResponse();
+							if (captcha.length == 0) {
+								alert("Пройдите проверку reCAPTCHA.");
+								return;
+							}
 							loading.style.display = "block";
 							button.className = "button_diactive";
 							
 							var data = new FormData();
 							data.append("login", _login);
 							data.append("password", _password);
+							data.append("g-recaptcha-response", captcha);
 							
 							// AJAX запрос
 							$.ajax({
