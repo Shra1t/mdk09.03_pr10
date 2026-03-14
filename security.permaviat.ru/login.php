@@ -1,6 +1,7 @@
 <?php
 	session_start();
 	include("./settings/connect_datebase.php");
+	include("./settings/recaptcha_config.php");
 	
 	if (isset($_SESSION['user'])) {
 		if($_SESSION['user'] != -1) {
@@ -45,6 +46,7 @@
 					
 					<a href="regin.php">Регистрация</a>
 					<br><a href="recovery.php">Забыли пароль?</a>
+					<div class="g-recaptcha" data-sitekey="<?php echo RECAPTCHA_SITE_KEY; ?>"></div>
 					<input type="button" class="button" value="Войти" onclick="LogIn()"/>
 					<img src = "img/loading.gif" class="loading"/>
 				</div>
